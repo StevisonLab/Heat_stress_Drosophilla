@@ -104,7 +104,7 @@ write_csv2(as.data.frame(summary(res.aov4)$coefficients), "Stats/RQ_lmer.csv", c
 anova_res.aov4 <- Anova(res.aov4)
 write_csv2(as.data.frame(anova_res.aov4), "Stats/RQ_aov.csv", col_names = T)
 RQS=summaryBy(RQ~Treatment+Species+Sex,data=resp,FUN = mean,na.rm=T, stringsAsFactors = FALSE)
-lsmRQ<- emmeans(res.aov4, ~ Species)
+lsmRQ<- emmeans(res.aov4, ~ Species + Treatment)
 summary(lsmRQ)
 cldRQ <-cld(lsmRQ, Letters = letters, alpha = 0.05)
 
@@ -128,7 +128,7 @@ as.data.frame(summary(res.aov7)$coefficients)
 write_csv2(as.data.frame(summary(res.aov7)$coefficients), "Stats/Weight_lmer.csv", col_names = T)
 anova_res.aov7 <- Anova(res.aov7)
 write_csv2(as.data.frame(anova_res.aov7), "Stats/Weight_aov.csv", col_names = T)
-lsm7 <- emmeans(res.aov7, ~ Species * Treatment * Sex)
+lsm7 <- emmeans(res.aov7, ~ Species * Treatment)
 write_csv2(summary(lsm7), "Stats/emmeans_Weight.csv")
 
 ##Extract significant letters
@@ -150,8 +150,9 @@ as.data.frame(summary(res.aov8)$coefficients)
 write_csv2(as.data.frame(summary(res.aov8)$coefficients), "Stats/CTmax_lmer.csv", col_names = T)
 anova_res.aov8 <- Anova(res.aov8)
 write_csv2(as.data.frame(anova_res.aov8), "Stats/CTmax_aov.csv", col_names = T)
-lsm8<- emmeans(res.aov8, ~ Species*Treatment*Sex)
+lsm8<- emmeans(res.aov8, ~ Species+Treatment+Sex)
 write_csv2(summary(lsm8), "Stats/emmeans_CTmax.csv")
+sumlsm8 <- summary(lsm8)
 cld8 <-cld(lsm8, Letters = letters, alpha = 0.05)
 
 ##Subset significant letters for plots
@@ -160,6 +161,16 @@ CT.summarized=merge(CTS,cld8, stringsAsFactors = FALSE, na.rm=TRUE, check.names 
 CT.summarized$group=ifelse(CT.summarized$.group=="        h ","h", ifelse(CT.summarized$.group=="       gh ","gh", ifelse(CT.summarized$.group=="   c      ","c", ifelse(CT.summarized$.group=="      fg  ","fg", ifelse(CT.summarized$.group=="      fgh ","fgh", ifelse(CT.summarized$.group==" a        ","a", ifelse(CT.summarized$.group=="     ef   ","ef", ifelse(CT.summarized$.group=="    d     ","d", ifelse(CT.summarized$.group=="         i","i", ifelse(CT.summarized$.group=="     e    ","e", ifelse(CT.summarized$.group==" ab       ","ab", ifelse(CT.summarized$.group=="  bc      ","bc", CT.summarized$.group))))))))))))
 CTdmel = subset(CT.summarized, CT.summarized$Species=="DMEL", na.rm=TRUE, select = c(Species, Sex, Treatment, CT_max.mean, group))
 CTdpse = subset(CT.summarized, CT.summarized$Species=="DPSE", na.rm=TRUE, select = c(Species, Sex, Treatment, CT_max.mean, group))
+
+##Graphical abstract plot
+GA = ggplot(sumlsm8, aes(x= Treatment, y= emmean, group = Species, color= Species))+
+  rremove("xlab") + 
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.y = element_blank()) +
+  theme(axis.text.x=element_blank()) +
+  scale_color_manual(values=c('darkgreen', 'orange')) +
+  geom_line(size=3) + facet_wrap(~Sex) 
+GA
 
 ### Figure 4
 ## Panel A (CTmax)

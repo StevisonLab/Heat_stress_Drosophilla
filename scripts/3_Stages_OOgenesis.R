@@ -27,10 +27,11 @@ fit_Oocyte <- glmer.nb(Number_Oocyte ~ (1|Replicate_Cor)  + (1|Ovariole_cor) + (
 lsm <- pairs(emmeans(fit_Oocyte, ~ Stage * Timepoint * Treatment * Species))
 summary(fit_Oocyte)$coefficients
 summary(lsm, type = "response")
+emmeans(res.aov7, ~ Species * Treatment)
 anova_fitOoocyte <- Anova(fit_Oocyte)
 anova_fitOoocyte
 summary(fit_Oocyte)
-cld9 <- cld(lsm, Letters = letters, alpha = 0.05)
+cld9 <- cld(lsm, Letters = letters)
 fit_Oocyte
 
 ##Save model tables
@@ -72,8 +73,8 @@ cldDPSE9 <- subset(cld9, cld9$Species=="DPSE", na.rm=TRUE, select = c(Species, T
 
 ##Summary for data merge with significant letters
 OOS=summaryBy(Number_Oocyte~Treatment+Species+Timepoint+Stage,data=Ova_A,na.rm=T, fun.max=max(Ova_A$Number_Oocyte), stringsAsFactors = FALSE)
-TS=summaryBy(TUNEL_Cell~Treatment+Species+Timepoint+Stage,data=Ova_A,na.rm=T, fun.max=max(Ova_A$TUNEL_Cell), stringsAsFactors = FALSE)
-
+TS=summaryBy(TUNEL_Cell~Treatment+Species+Timepoint+Stage+Ovariole_cor,data=Ova_A,na.rm=T,fun=max(Ova_A$TUNEL_Cell), stringsAsFactors = FALSE)
+TS=summaryBy(TUNEL_Cell.1~Treatment+Species+Timepoint+Stage,data=TS,na.rm=T,FUN=sum, stringsAsFactors = FALSE)
 OOS.summarized=merge(OOS,cld9, stringsAsFactors = FALSE, na.rm=TRUE, check.names = T)
 TS.summarized=merge(TS,cldTS, stringsAsFactors = FALSE, na.rm=TRUE, check.names = F)
 
@@ -83,7 +84,7 @@ OOSdpse = subset(OOS.summarized, OOS.summarized$Species=="DPSE" & OOS.summarized
 OOS1_7 = subset(OOS.summarized, OOS.summarized$Stage=="Stages 1-7", na.rm=TRUE, select = c(Species, Timepoint, Stage, Treatment, Number_Oocyte.mean, group, emmean, SE))
 OOS11 = subset(OOS.summarized, OOS.summarized$Stage=="Stage 11", na.rm=TRUE, select = c(Species, Timepoint, Stage, Treatment, Number_Oocyte.mean, group, emmean, SE))
 
-TSEr = subset(TS.summarized, TS.summarized$Timepoint=="Early", na.rm=TRUE, select = c(Species, Timepoint, Stage, Treatment,TUNEL_Cell.mean, .group, emmean, SE))
+TSEr = subset(TS.summarized, TS.summarized$Timepoint=="Early", na.rm=TRUE, select = c(Species, Timepoint, Stage, Treatment,TUNEL_Cell.1.sum, .group, emmean, SE))
 TSEr$group=ifelse(TSEr$.group==" ab ","ab", ifelse(TSEr$.group==" a  ","a", ifelse(TSEr$.group=="  b ","b", ifelse(TSEr$.group=="   c","c", TSEr$.group))))
 OOS1_7$group2=ifelse(OOS1_7$group=="gh","ab", ifelse(OOS1_7$group=="h","a", ifelse(OOS1_7$group=="fg","bc",  OOS1_7$group)))
 OOS11$SE2=ifelse(OOS11$Number_Oocyte.mean==0, 0, OOS11$SE)
@@ -142,7 +143,7 @@ dev.off()
 
 ##Figure 6
 pdf("Figures/Fig6.pdf")
-TUNEL <- ggplot(data=TSEr, aes(x=Treatment, y=TUNEL_Cell.mean, fill=Treatment, alpha=Stage)) +
+TUNEL <- ggplot(data=TSEr, aes(x=Treatment, y=TUNEL_Cell.1.sum, fill=Treatment, alpha=Stage)) +
   #scale_fill_manual(breaks = c("Stages 1-7", "Stages 8-10", "Stage 11", "Stage 12-14"), values=c("#eff3ff","#bdd7e7","#6baed6", "#2171b5")) +
   scale_fill_manual(breaks = c("Control", "HighTemp"), values=c("#2171b5","red")) +
   ylab("Oocytes TUNEL-positive per ovariole") +
@@ -150,7 +151,7 @@ TUNEL <- ggplot(data=TSEr, aes(x=Treatment, y=TUNEL_Cell.mean, fill=Treatment, a
   theme(axis.text.x = element_text(size = 14)) +
   scale_alpha_manual(values=c(0.1, 0.25, 0.50, 0.95)) +
   theme(panel.background = element_blank(), axis.line = element_line(colour = "black")) +
-  stat_summary(fun= "identity", geom="bar", position = "stack") + facet_wrap(~Species) + theme(strip.text.x = element_blank())+ 
-  geom_text(aes(y = TUNEL_Cell.mean, x= Treatment, label = str_trim(group)), size = 4, position = position_dodge(0.1),  hjust = 1, check_overlap = T) 
+  stat_summary(fun= "identity", geom="bar", position = "stack") + facet_wrap(~Species) + theme(strip.text.x = element_blank()) 
+  #geom_text(aes(y = TUNEL_Cell.1.sum, x= Treatment, label = str_trim(group)), size = 4, position = position_dodge(0.1),  hjust = 1, check_overlap = T) 
 TUNEL                                                                                                                                                                                                                                                                                   
 dev.off()
