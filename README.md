@@ -7,4 +7,4 @@
 ### 2. [Analysis](https://github.com/StevisonLab/Heat_stress_Drosophilla/tree/main/scripts)
 ### 3. [Statistical results](https://github.com/StevisonLab/Heat_stress_Drosophilla/tree/main/Stats)
 
-## The project includes a master script that will run the 3 analyses of the 3 different sections, but each can be run independently.
+### The project includes a master script that will run the 3 analyses of the 3 different sections, but each can be run independently.
