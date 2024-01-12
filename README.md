@@ -1,5 +1,5 @@
 # Heat-Stress_Drosophila
-## A comparison of thermal stress response between _Drosophila melanogaster_ and _Drosophila pseudoobscura_ reveals differences between species and sexes
+## Data and code from: A comparison of thermal stress response between _Drosophila melanogaster_ and _Drosophila pseudoobscura_ reveals differences between species and sexes
 
 ### The project includes 3 different sections, Fecundity, Physiology, and Oogenesis development. The data associated with the entire project it is organized into separate subfolders:
 
@@ -8,3 +8,6 @@
 ### 3. [Statistical results](https://github.com/StevisonLab/Heat_stress_Drosophilla/tree/main/Stats)
 
 ### The project includes a master script that will run the 3 analyses of the 3 different sections, but each can be run independently.
+
+To cite this repository, use the following DOI:
+[![DOI](https://zenodo.org/badge/666091238.svg)](https://zenodo.org/doi/10.5281/zenodo.10498636)
